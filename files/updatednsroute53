@@ -4,8 +4,7 @@
 # description: Removed DNS entries from Route53
 #
 
-. /etc/init.d/functions
-lockfile=/var/lock/subsys/updatednsroute53
+lockfile=/var/lock/updatednsroute53
 
 case "$1" in
     start)
@@ -15,6 +14,14 @@ case "$1" in
     stop)
         /usr/sbin/delete-dns-route53 1> /tmp/deletedns 2>&1
         rm -f $lockfile
+        ;;
+    status)
+        if [[ -f $lockfile ]];
+        then
+          exit 0
+        else
+          exit 1
+        fi
         ;;
     restart)
         $0 stop
