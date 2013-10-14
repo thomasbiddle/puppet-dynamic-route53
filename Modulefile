@@ -1,6 +1,9 @@
-name 'dynamicroute53'
+name    'tjbiddle-dynamicroute53'
 version '0.0.1'
+source 'UNKNOWN'
+author 'tjbiddle'
+license 'MIT'
+summary 'UNKNOWN'
 dependency 'puppetlabs/stdlib', '>= 2.2.1'
-description "The dependency actually isn't required - Just testing things out."
-
-
+description 'Automatically have EC2 instances add themselves to Route53'
+project_page 'https://github.com/thomasbiddle/puppet-dynamic-route53'
