@@ -14,6 +14,7 @@ class dynamicroute53::ec2tools {
     owner   => root,
     group   => root,
     mode    => 600,
+    content => template('dynamicroute53/config.erb'),
     require => File['/etc/route53']
   }
 
@@ -25,7 +26,8 @@ class dynamicroute53::ec2tools {
   }
 
   exec { 'install_ec2_metatdata':
-    command => 'cd /opt/aws/ && wget -q http://s3.amazonaws.com/ec2metadata/ec2-metadata',
+    command => 'wget -q -P /opt/aws http://s3.amazonaws.com/ec2metadata/ec2-metadata',
+    path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     creates => '/opt/aws/ec2-metadata',
     require => [
       File['/opt/aws'],
@@ -42,7 +44,8 @@ class dynamicroute53::ec2tools {
   }
 
   exec { 'install_ec2_tools':
-    command => 'cd /opt/aws/ && wget -q http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip && unzip -qq ec2-api-tools.zip && rsync -a --no-o --no-g ec2-api-tools-*/ /opt/aws/',
+    command => 'wget -q -P /opt/aws http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip && unzip -qq /opt/aws/ec2-api-tools.zip -d /opt/aws/ && rsync -a --no-o --no-g /opt/aws/ec2-api-tools-*/ /opt/aws/',
+    path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     creates => '/opt/aws/bin',
     require => [
       File['/opt/aws'],
@@ -56,7 +59,7 @@ class dynamicroute53::ec2tools {
     owner   => root,
     group   => root,
     mode    => 600,
-    source  => 'puppet:///modules/dynamicroute53/aws.sh'
+    source  => 'puppet:///modules/dynamicroute53/aws.sh',
     require => [
       Exec['install_ec2_metatdata'],
       Exec['install_ec2_tools'],

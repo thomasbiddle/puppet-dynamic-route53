@@ -6,8 +6,8 @@
 #"route53:ListResourceRecordSets"
 #"route53:ListHostedZones"
 
-AWS_ACCESS_KEY_ID="<%= scope.lookupvar('$dynamicroute53::aws_access_id') %>"
-AWS_SECRET_ACCESS_KEY="<%= scope.lookupvar('$dynamicroute53::aws_secret_key') %>"
-ZONE="<%= scope.lookupvar('$dynamicroute53::domain') %>"
-TTL="<%= scope.lookupvar('$dynamicroute53::ttl') %>"
+AWS_ACCESS_KEY_ID="<%= scope.lookupvar('dynamicroute53::aws_access_id') %>"
+AWS_SECRET_ACCESS_KEY="<%= scope.lookupvar('dynamicroute53::aws_secret_key') %>"
+ZONE="<%= scope.lookupvar('dynamicroute53::domain') %>"
+TTL="<%= scope.lookupvar('dynamicroute53::ttl') %>"
 

@@ -2,18 +2,20 @@ class dynamicroute53::service {
 
   file { '/usr/sbin/update-dns-route53':
     ensure  => present,
-    content => template('dynamicroute53/update-dns-route53.conf.erb'),
+    content => template('dynamicroute53/update-dns-route53.erb'),
     owner   => root,
     group   => root,
-    mode    => 754
+    mode    => 754,
+    require => Package['openjdk-6-jdk']
   }
 
   file { '/usr/sbin/delete-dns-route53':
     ensure  => present,
-    content => template('dynamicroute53/delete-dns-route53.conf.erb'),
+    content => template('dynamicroute53/delete-dns-route53.erb'),
     owner   => root,
     group   => root,
-    mode    => 754
+    mode    => 754,
+    require => Package['openjdk-6-jdk']
   }
 
   file { '/etc/init.d/updatednsroute53':
@@ -24,7 +26,7 @@ class dynamicroute53::service {
     mode    => 754,
     require => [
       File['/usr/sbin/update-dns-route53'],
-      File['/usr/sbin/delete-dns-route53']
+      File['/usr/sbin/delete-dns-route53'],
     ]
   }
 
