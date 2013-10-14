@@ -1,0 +1,50 @@
+ #!/bin/sh
+
+#This script will get the Name tag of the instance from EC2 and apply it both as a CNAME record
+#in Route53 for the specified domain below and update the hostname on the machine and
+#in the hosts file.
+
+# Make sure only root can run our script
+if [ "$(id -u)" != "0" ]; then
+echo "This script must be run as root" 1>&2
+exit 1
+fi
+
+# Load configuration
+. /etc/route53/config
+. /etc/profile.d/java.sh
+. /etc/profile.d/aws.sh
+
+# Export access key ID and secret for our tools
+export AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY
+
+# Replace this with your domain
+DOMAIN="<%= scope.lookupvar('$dynamicroute53::domain') %>"
+
+HOSTNAME=$(/opt/aws/bin/ec2-describe-tags -O $AWS_ACCESS_KEY_ID -W $AWS_SECRET_ACCESS_KEY --region "<%= scope.lookupvar('$dynamicroute53::region') %>" \
+  --filter "resource-type=instance" \
+  --filter "resource-id=$(/opt/aws/ec2-metadata -i | cut -d ' ' -f2)" \
+  --filter "key=Name" | cut -f5)
+
+IPV4=`/usr/bin/curl -s http://169.254.169.254/latest/meta-data/public-ipv4`
+
+# Set the host name
+/bin/hostname $HOSTNAME.$DOMAIN
+echo $HOSTNAME.$DOMAIN > /etc/hostname
+# Set host name on Red Hat variants
+#/bin/sed -i '/HOSTNAME/d' /etc/sysconfig/network
+#echo HOSTNAME=$HOSTNAME.$DOMAIN >> /etc/sysconfig/network
+
+# Add fqdn to hosts file
+if [ `grep -c "$IPV4 $HOSTNAME.$DOMAIN $HOSTNAME" /etc/hosts` -eq 0 ];
+then
+  echo "$IPV4 $HOSTNAME.$DOMAIN $HOSTNAME" >> /etc/hosts
+fi
+
+
+# Use command line scripts to get public hostname
+PUBLIC_HOSTNAME=$(/opt/aws/ec2-metadata | grep 'public-hostname:' | cut -d ' ' -f 2)
+
+# Create a new CNAME record on Route 53, replacing the old entry if nessesary
+/usr/local/bin/cli53 rrcreate "$ZONE" "$HOSTNAME" CNAME "$PUBLIC_HOSTNAME" --replace --ttl "$TTL"

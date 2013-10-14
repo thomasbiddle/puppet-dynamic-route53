@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# chkconfig: 35 10 10
+# description: Removed DNS entries from Route53
+#
+
+. /etc/init.d/functions
+lockfile=/var/lock/subsys/updatednsroute53
+
+case "$1" in
+    start)
+        /bin/bash /usr/sbin/update-dns-route53 1> /tmp/updatedns 2>&1
+        touch $lockfile
+        ;;
+    stop)
+        /usr/sbin/delete-dns-route53 1> /tmp/deletedns 2>&1
+        rm -f $lockfile
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit 0

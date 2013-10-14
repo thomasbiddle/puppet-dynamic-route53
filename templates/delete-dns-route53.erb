@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# This script will delete the hostname from Route53 on shutdown of the machine
+#
+
+# Make sure only root can run our script
+if [ "$(id -u)" != "0" ]; then
+echo "This script must be run as root" 1>&2
+exit 1
+fi
+
+# Load configuration
+. /etc/route53/config
+. /etc/profile.d/java.sh
+. /etc/profile.d/aws.sh
+
+# Export access key ID and secret for our tools
+export AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY
+
+HOSTNAME=$(/opt/aws/bin/ec2-describe-tags -O $AWS_ACCESS_KEY_ID -W $AWS_SECRET_ACCESS_KEY --region "<%= scope.lookupvar('$dynamicroute53::region') %> \
+  --filter "resource-type=instance" \
+  --filter "resource-id=$(/opt/aws/ec2-metadata -i | cut -d ' ' -f2)" \
+  --filter "key=Name" | cut -f5)
+
+# Delete the hostname from DNS on shutdown
+/usr/local/bin/cli53 rrdelete "$ZONE" "$HOSTNAME"
