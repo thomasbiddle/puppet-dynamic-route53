@@ -6,7 +6,7 @@ class dynamicroute53::service {
     owner   => root,
     group   => root,
     mode    => 754,
-    require => Package['openjdk-6-jdk']
+    require => Package['oracle-java7-installer']
   }
 
   file { '/usr/sbin/delete-dns-route53':
@@ -15,7 +15,7 @@ class dynamicroute53::service {
     owner   => root,
     group   => root,
     mode    => 754,
-    require => Package['openjdk-6-jdk']
+    require => Package['oracle-java7-installer']
   }
 
   file { '/etc/init.d/updatednsroute53':

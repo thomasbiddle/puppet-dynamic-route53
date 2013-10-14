@@ -16,15 +16,15 @@ class dynamicroute53::packages {
     ensure => purged
   }
 
-  file { '/var/local/oracale-java7.preseed':
-    ensure => present
-    source => 'puppet:///modules/dynamicroute53/oracale-java7.preseed'
+  file { '/var/local/oracle-java7.preseed':
+    ensure => present,
+    source => 'puppet:///modules/dynamicroute53/oracle-java7.preseed'
   }
 
   # !!! By installing this package - you agree to Oracle's license.
   package { 'oracle-java7-installer':
     ensure       => installed,
-    responsefile => '/var/local/oracale-java7.preseed',
+    responsefile => '/var/local/oracle-java7.preseed',
     require      => [
       Apt::Ppa['ppa:webupd8team/java'],
       Package['openjdk-6-jdk'],
