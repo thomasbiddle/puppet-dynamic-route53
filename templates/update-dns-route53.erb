@@ -37,9 +37,9 @@ echo $HOSTNAME.$DOMAIN > /etc/hostname
 #echo HOSTNAME=$HOSTNAME.$DOMAIN >> /etc/sysconfig/network
 
 # Add fqdn to hosts file
-if [ `grep -c "$IPV4 $HOSTNAME.$DOMAIN $HOSTNAME" /etc/hosts` -eq 0 ];
+if [ `grep -c "127.0.0.1 $HOSTNAME.$DOMAIN $HOSTNAME" /etc/hosts` -eq 0 ];
 then
-  echo "$IPV4 $HOSTNAME.$DOMAIN $HOSTNAME" >> /etc/hosts
+  echo "127.0.0.1 $HOSTNAME.$DOMAIN $HOSTNAME" >> /etc/hosts
 fi
 
 
