@@ -34,8 +34,10 @@ class dynamicroute53::packages {
     ]
   }
 
-  package { 'python-pip':
-    ensure => installed
+  if ! defined(Package['python-pip']) {
+    package { 'python-pip':
+      ensure => installed,
+    }
   }
 
   package { 'cli53':
@@ -44,8 +46,10 @@ class dynamicroute53::packages {
      provider => pip,
   }
 
-  package { 'unzip':
-    ensure => installed
+  if ! defined(Package['unzip']) {
+    package { 'unzip':
+      ensure => installed,
+    }
   }
 
 }
