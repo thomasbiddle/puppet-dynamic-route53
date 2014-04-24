@@ -22,7 +22,7 @@ class dynamicroute53::ec2tools {
     ensure => directory,
     owner  => root,
     group  => root,
-    mode   => 700,
+    mode   => 755,
   }
 
   exec { 'install_ec2_metatdata':
