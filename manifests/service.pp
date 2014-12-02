@@ -5,8 +5,7 @@ class dynamicroute53::service {
     content => template('dynamicroute53/update-dns-route53.erb'),
     owner   => root,
     group   => root,
-    mode    => 754,
-    require => Package['oracle-java7-installer']
+    mode    => 754
   }
 
   file { '/usr/sbin/delete-dns-route53':
@@ -14,8 +13,7 @@ class dynamicroute53::service {
     content => template('dynamicroute53/delete-dns-route53.erb'),
     owner   => root,
     group   => root,
-    mode    => 754,
-    require => Package['oracle-java7-installer']
+    mode    => 754
   }
 
   file { '/etc/init.d/updatednsroute53':
@@ -27,6 +25,7 @@ class dynamicroute53::service {
     require => [
       File['/usr/sbin/update-dns-route53'],
       File['/usr/sbin/delete-dns-route53'],
+      File['/root/.aws/credentials']
     ]
   }
 

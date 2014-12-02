@@ -1,5 +1,5 @@
 name    'tjbiddle-dynamicroute53'
-version '0.0.1'
+version '1.0.0'
 source 'UNKNOWN'
 author 'tjbiddle'
 license 'MIT'

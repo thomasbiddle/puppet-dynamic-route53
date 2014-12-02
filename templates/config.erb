@@ -1,13 +1,3 @@
-# Set access and secret key of a user that
-#only has access to the following AWS objects/privileges:
-#"ec2:DescribeTags"
-#"route53:ChangeResourceRecordSets",
-#"route53:GetHostedZone",
-#"route53:ListResourceRecordSets"
-#"route53:ListHostedZones"
-
-AWS_ACCESS_KEY_ID="<%= scope.lookupvar('dynamicroute53::aws_access_id') %>"
-AWS_SECRET_ACCESS_KEY="<%= scope.lookupvar('dynamicroute53::aws_secret_key') %>"
-ZONE="<%= scope.lookupvar('dynamicroute53::domain') %>"
-TTL="<%= scope.lookupvar('dynamicroute53::ttl') %>"
-
+[default]
+output = text
+region = <%= scope.lookupvar('dynamicroute53::region') %>
