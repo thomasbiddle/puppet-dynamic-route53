@@ -24,8 +24,7 @@ class dynamicroute53::service {
     mode    => 754,
     require => [
       File['/usr/sbin/update-dns-route53'],
-      File['/usr/sbin/delete-dns-route53'],
-      File['/root/.aws/credentials']
+      File['/usr/sbin/delete-dns-route53']
     ]
   }
 

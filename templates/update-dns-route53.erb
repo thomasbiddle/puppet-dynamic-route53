@@ -13,6 +13,10 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+# AWS Credentials
+export AWS_ACCESS_KEY_ID=<%= scope.lookupvar('dynamicroute53::aws_access_id') %>
+export AWS_SECRET_ACCESS_KEY=<%= scope.lookupvar('dynamicroute53::aws_secret_key') %>
+
 # Get our Instance ID, local IP, and EC2 Public Hostname using cloud-utils ec2metadata
 INSTANCE_ID=$(/usr/bin/ec2metadata --instance-id)
 IPV4_ADDRESS=$(/usr/bin/ec2metadata --local-ipv4)
@@ -25,6 +29,8 @@ TTL=<%= scope.lookupvar('dynamicroute53::ttl') %>
 
 # Get our desired hostname from the "Name" tag on our instance
 HOSTNAME=$(/usr/local/bin/aws ec2 describe-tags \
+  --region "ap-northeast-1" \
+  --output "text" \
   --filters "Name=resource-type,Values=instance" \
             "Name=resource-id,Values=${INSTANCE_ID}" \
             "Name=key,Values=Name" \
@@ -46,11 +52,11 @@ fi
 <% if scope.lookupvar('dynamicroute53::private_dns') %>
 # Set an A record with the local IP
 
-/usr/local/bin/aws route53 change-resource-record-sets --hosted-zone-id ${HOSTED_ZONE_ID} \
+/usr/local/bin/aws route53 change-resource-record-sets --region ap-northeast-1 --hosted-zone-id ${HOSTED_ZONE_ID} \
   --change-batch "{\"Comment\": \"string\",\"Changes\": [{\"Action\": \"CREATE\",\"ResourceRecordSet\": {\"Name\": \"${HOSTNAME}.${DOMAIN}\",\"Type\": \"A\",\"TTL\": ${TTL},\"ResourceRecords\": [{\"Value\": \"${IPV4_ADDRESS}\"}]}}]}"
 <% else %>
 # Set a CNAME record with the public hostname
 
-/usr/local/bin/aws route53 change-resource-record-sets --hosted-zone-id ${HOSTED_ZONE_ID} \
+/usr/local/bin/aws route53 change-resource-record-sets --region ap-northeast-1 --hosted-zone-id ${HOSTED_ZONE_ID} \
   --change-batch "{\"Comment\": \"string\",\"Changes\": [{\"Action\": \"CREATE\",\"ResourceRecordSet\": {\"Name\": \"${HOSTNAME}.${DOMAIN}\",\"Type\": \"CNAME\",\"TTL\": ${TTL},\"ResourceRecords\": [{\"Value\": \"${PUBLIC_HOSTNAME}\"}]}}]}"
 <% end %>
