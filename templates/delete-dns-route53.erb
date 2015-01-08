@@ -15,7 +15,6 @@ export AWS_SECRET_ACCESS_KEY=<%= scope.lookupvar('dynamicroute53::aws_secret_key
 
 # Get our Instance ID, local IP, and EC2 Public Hostname using cloud-utils ec2metadata
 INSTANCE_ID=$(/usr/bin/ec2metadata --instance-id)
-IPV4_ADDRESS=$(/usr/bin/ec2metadata --local-ipv4)
 PUBLIC_HOSTNAME=$(/usr/bin/ec2metadata --public-hostname)
 
 # Set required variables for Route53 API Call
@@ -31,6 +30,9 @@ HOSTNAME=$(/usr/local/bin/aws ec2 describe-tags \
             "Name=resource-id,Values=${INSTANCE_ID}" \
             "Name=key,Values=Name" \
             | awk '{print $5}')
+
+# Use whatever IP is currently resolving in-case a record is left over.
+IPV4_ADDRESS=$(/usr/bin/host ${HOSTNAME}.${DOMAIN} | awk '{print $4}')
 
 # Begin changes
 ##############################################################
